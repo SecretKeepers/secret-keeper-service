@@ -14,7 +14,18 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
+    generate-ddl: true
+
+logging:
+  level:
+    root: WARN
+    web: INFO
+    com.secretkeeper: DEBUG
+
+token:
+  expirationms: 3600000
+  secret:
+    key: fbf9f806500c3b7bc652f7ed856b83adb369aa2b11c3a006bc546890e9b4e97b
