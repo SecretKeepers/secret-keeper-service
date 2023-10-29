@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
-    private String username;
-    private String password;
+public class SimpleSecretCreateRequest {
+    private String type;
+    private String secret;
+    private String description;
+    private String masterKey;
 }
-

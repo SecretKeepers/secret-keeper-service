@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleSecretRequest {
-    String type;
-    String secret;
-    String description;
+public class SetMasterKeyRequest {
+    private String masterKey;
 }

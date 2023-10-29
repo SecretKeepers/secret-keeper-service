@@ -1,18 +1,14 @@
 package com.secretkeeper.handlers;
 
-import com.secretkeeper.dto.SimpleSecretRequest;
-import com.secretkeeper.dto.SimpleSecretResponse;
+import com.secretkeeper.dto.SetMasterKeyRequest;
+import com.secretkeeper.dto.SimpleSecretCreateRequest;
+import com.secretkeeper.dto.SimpleSecretGetRequest;
 import com.secretkeeper.entities.SimpleSecret;
-import com.secretkeeper.entities.User;
-import com.secretkeeper.repositories.SimpleSecretRepository;
-import com.secretkeeper.repositories.UserRepository;
 import com.secretkeeper.services.SimpleSecretService;
 import com.secretkeeper.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,11 +19,28 @@ import org.springframework.web.bind.annotation.*;
 public class MainHandler {
 
     private final SimpleSecretService simpleSecretService;
+    private final UserService userService;
 
-    @PostMapping("/simple")
-    public ResponseEntity<SimpleSecret> simpleSecretAdd(@RequestBody SimpleSecretRequest request){
+    @PostMapping("/simple/create")
+    public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest request){
+        if(!userService.isMasterKeyValid(request.getMasterKey())){
+            return ResponseEntity.badRequest().body("Master Key is invalid!");
+        }
         SimpleSecret savedSecret = simpleSecretService.saveSecret(request);
         return new ResponseEntity<>(savedSecret, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/masterKey")
+    public ResponseEntity<?> setMasterKey(@RequestBody SetMasterKeyRequest request){
+        return userService.setMasterKey(request.getMasterKey());
+    }
+
+    @PostMapping("/simple/get")
+    public ResponseEntity<?> getSimpleSecret(@RequestBody SimpleSecretGetRequest request){
+        if(!userService.isMasterKeyValid(request.getMasterKey())){
+            return ResponseEntity.badRequest().body("Master Key is invalid!");
+        }
+        return simpleSecretService.getSecret(request.getSecretId(), request.getMasterKey());
     }
 
     @GetMapping("/users")

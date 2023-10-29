@@ -5,6 +5,7 @@ import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
 import com.secretkeeper.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,9 +25,10 @@ public class AuthHandler {
     }
 
     @GetMapping("/signout")
-    public void logout(@RequestHeader("Authorization") String tokenHeader) {
+    public HttpStatus logout(@RequestHeader("Authorization") String tokenHeader) {
         String token = tokenHeader.replace("Bearer ", "");
         authenticationService.logout(token);
+        return HttpStatus.OK;
     }
 }
 

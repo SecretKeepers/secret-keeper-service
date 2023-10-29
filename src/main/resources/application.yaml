@@ -7,6 +7,14 @@ spring:
 spring:
   config.activate.on-profile: dev
 
+# Uncomment to use with local db
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/secretkeeper
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
+# Uncomment to use with docker compose
   datasource:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
@@ -29,3 +37,7 @@ token:
   expirationms: 3600000
   secret:
     key: fbf9f806500c3b7bc652f7ed856b83adb369aa2b11c3a006bc546890e9b4e97b
+
+crypto:
+  salt: DED98215179DB291C445270E6E48AFF1
+  iv: 52331BCDDE7DD5FDB42B8FFDECEA9448

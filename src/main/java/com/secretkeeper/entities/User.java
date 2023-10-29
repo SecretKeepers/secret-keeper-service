@@ -20,13 +20,14 @@ public class User implements UserDetails{
     @GeneratedValue
     private Long id;
 
+    private String firstName;
+    private String lastName;
+
     @Column(unique = true)
     private String username;
 
     private String password;
-//    private String masterKey;
-    private String firstName;
-    private String lastName;
+    private String masterKey;
 
     @JsonManagedReference(value = "user")
     @OneToMany(mappedBy = "user")
