@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: dev
+
+---
+
+spring:
+  config.activate.on-profile: dev
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+
+logging:
+  level:
+    root: WARN
+    web: INFO
+    com.secretkeeper: DEBUG
+
+token:
+  expirationms: 3600000
+  secret:
+    key: fbf9f806500c3b7bc652f7ed856b83adb369aa2b11c3a006bc546890e9b4e97b
