@@ -1,7 +1,7 @@
-package com.secretkeeper.service;
+package com.secretkeeper.services;
 
-import com.secretkeeper.entity.User;
-import com.secretkeeper.repository.UserRepository;
+import com.secretkeeper.entities.User;
+import com.secretkeeper.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,9 +1,9 @@
-package com.secretkeeper.filter;
+package com.secretkeeper.filters;
 
 import java.io.IOException;
 
-import com.secretkeeper.service.JwtService;
-import com.secretkeeper.service.UserService;
+import com.secretkeeper.services.JwtService;
+import com.secretkeeper.services.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

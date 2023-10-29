@@ -3,11 +3,12 @@ package com.secretkeeper.handlers;
 import com.secretkeeper.dto.JwtAuthenticationResponse;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
-import com.secretkeeper.service.AuthenticationService;
+import com.secretkeeper.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequiredArgsConstructor
 public class AuthHandler {
     private final AuthenticationService authenticationService;

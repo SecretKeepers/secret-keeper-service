@@ -1,4 +1,4 @@
-package com.secretkeeper.service;
+package com.secretkeeper.services;
 
 import java.security.Key;
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.secretkeeper.entity;
+package com.secretkeeper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,11 +25,6 @@ public class User implements UserDetails{
 //    private String masterKey;
     private String firstName;
     private String lastName;
-
-//    public void setPassword(String password) {
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//        this.password = encoder.encode(password);
-//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

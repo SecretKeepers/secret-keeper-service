@@ -1,10 +1,10 @@
-package com.secretkeeper.service;
+package com.secretkeeper.services;
 
 import com.secretkeeper.dto.JwtAuthenticationResponse;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
-import com.secretkeeper.entity.User;
-import com.secretkeeper.repository.UserRepository;
+import com.secretkeeper.entities.User;
+import com.secretkeeper.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

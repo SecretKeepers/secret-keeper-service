@@ -1,6 +1,6 @@
-package com.secretkeeper.repository;
+package com.secretkeeper.repositories;
 
-import com.secretkeeper.entity.User;
+import com.secretkeeper.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
