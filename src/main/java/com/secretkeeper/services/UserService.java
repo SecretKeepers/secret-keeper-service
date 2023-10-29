@@ -29,15 +29,5 @@ public class UserService implements UserDetailsService{
         return userRepository.save(newUser);
     }
 
-//    public User authenticateUser(String username, String password) {
-//        User user = userRepository.findByUsername(username);
-//        if (user != null) {
-//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//            if (encoder.matches(password, user.getPassword())) {
-//                return user;
-//            }
-//        }
-//        return null;
-//    }
 }
 
