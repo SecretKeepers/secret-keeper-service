@@ -1,7 +1,7 @@
 package com.secretkeeper.configs;
 
 import com.secretkeeper.filters.JwtAuthenticationFilter;
-import com.secretkeeper.services.UserService;
+import com.secretkeeper.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,9 +30,8 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserService userService;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }

@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
-    private String username;
-    private String password;
+public class SimpleSecretResponse {
+    private Long id;
+    private String type;
+    private String secret;
+    private String description;
+    private Date createdAt;
 }
-
