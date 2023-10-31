@@ -8,10 +8,10 @@ WORKDIR /app
 COPY . /app
 
 # Build the application using Maven
-RUN ./mvnw install -"Dmaven".test.skip=true
+RUN ./mvnw clean install -Dmaven.test.skip=true
 
 # Copy the built JAR
-COPY /app/target/service-1.0.jar /app/app.jar
+COPY target/service-1.0.jar /app/app.jar
 
 # Expose the port that your Spring Boot app is listening on (change this to your app's port)
 EXPOSE 8080
