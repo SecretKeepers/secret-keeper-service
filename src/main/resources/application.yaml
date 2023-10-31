@@ -8,18 +8,18 @@ spring:
   config.activate.on-profile: dev
 
 # Uncomment to use with local db
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/secretkeeper
-#    username: root
-#    password: root
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3306/secretkeeper
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 # Uncomment to use with docker compose
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#  datasource:
+#    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+#    username: ${MYSQL_USER}
+#    password: ${MYSQL_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -34,7 +34,7 @@ logging:
     com.secretkeeper: DEBUG
 
 token:
-  expirationms: 3600000
+  expirationms: 21600000 #6 hours
   secret:
     key: fbf9f806500c3b7bc652f7ed856b83adb369aa2b11c3a006bc546890e9b4e97b
 

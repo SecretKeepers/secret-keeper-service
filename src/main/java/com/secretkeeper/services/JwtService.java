@@ -20,10 +20,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 
     @Value("${token.secret.key}")
-    String jwtSecretKey;
+    private String jwtSecretKey;
 
     @Value("${token.expirationms}")
-    Long jwtExpirationMs;
+    private Long jwtExpirationMs;
 
     private final Set<String> blacklist = new HashSet<>();
 
