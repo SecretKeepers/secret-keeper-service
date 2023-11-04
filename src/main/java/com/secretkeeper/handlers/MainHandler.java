@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
@@ -43,6 +45,14 @@ public class MainHandler {
             String masterKey = jwtService.extractClaim(token, "masterKey");
             SimpleSecretResponse secret = simpleSecretService.getSecret(secretRequest.getSecretId(), masterKey);
             return ResponseEntity.ok(secret);
+        }
+        return ResponseEntity.badRequest().body("Invalid secret type!");
+    }
+
+    @GetMapping("/get/all")
+    public ResponseEntity<?> getAllSecrets(@RequestParam String type) {
+        if(type.equalsIgnoreCase("simple")) {
+            return ResponseEntity.ok(simpleSecretService.getAllSecrets());
         }
         return ResponseEntity.badRequest().body("Invalid secret type!");
     }

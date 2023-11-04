@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SimpleSecretService {
@@ -46,6 +48,11 @@ public class SimpleSecretService {
                 .description(secret.getSecretDescription())
                 .createdAt(secret.getCreatedAt())
                 .build();
+    }
+
+    public List<SimpleSecret> getAllSecrets() {
+        User user = userService.getAuthUserFromToken();
+        return simpleSecretRepository.findByUser(user);
     }
 
 }
