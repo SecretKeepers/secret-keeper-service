@@ -1,11 +1,13 @@
 package com.secretkeeper.handlers;
 
+import com.secretkeeper.dto.SetMasterKeyRequest;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
 import com.secretkeeper.entities.User;
 import com.secretkeeper.exceptions.AuthenticationException;
 import com.secretkeeper.exceptions.UserCreationException;
 import com.secretkeeper.services.AuthenticationService;
+import com.secretkeeper.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthHandler {
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest request) {
@@ -47,6 +50,30 @@ public class AuthHandler {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during sign in!");
+        }
+    }
+
+    @PostMapping("/master/set")
+    public ResponseEntity<?> setMasterKey(@RequestBody SetMasterKeyRequest request){
+        return userService.setMasterKey(request.getMasterKey());
+    }
+
+//    @PostMapping("/master/validate")
+//    public ResponseEntity<?> validateMasterKey(@RequestBody Map<String, Object> request){
+//        String masterKey = (String) request.get("masterKey");
+//        if(userService.isMasterKeyValid(masterKey))
+//            return ResponseEntity.ok("Master Key is valid");
+//        else return ResponseEntity.badRequest().body("Master Key is invalid!");
+//    }
+
+    @PostMapping("/master/add")
+    public ResponseEntity<?> addMasterKeyToJWT(@RequestBody SetMasterKeyRequest masterKeyRequest,
+            HttpServletRequest request, HttpServletResponse response) {
+        HttpStatus status = authenticationService.addMasterKeyInJWT(masterKeyRequest.getMasterKey(), request, response);
+        if (status == HttpStatus.OK) {
+            return ResponseEntity.ok("Success");
+        } else {
+            return ResponseEntity.status(status).body("Invalid master key!");
         }
     }
 

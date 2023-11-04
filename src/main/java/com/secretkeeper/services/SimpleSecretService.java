@@ -16,10 +16,11 @@ public class SimpleSecretService {
     private final CryptoService cryptoService;
     private final UserService userService;
 
-    public SimpleSecret saveSecret(SimpleSecretCreateRequest request) {
+    public SimpleSecret saveSecret(SimpleSecretCreateRequest request, String masterKey) {
         User user = userService.getAuthUserFromToken();
-
-        String encryptedSecret = cryptoService.encrypt(request.getSecret(), request.getMasterKey());
+        //TODO
+        //add validation for master key
+        String encryptedSecret = cryptoService.encrypt(request.getSecret(), masterKey);
         SimpleSecret secret = SimpleSecret
                 .builder()
                 .type(request.getType())

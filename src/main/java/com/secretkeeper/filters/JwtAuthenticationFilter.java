@@ -1,11 +1,9 @@
 package com.secretkeeper.filters;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import com.secretkeeper.services.CustomUserDetailsService;
 import com.secretkeeper.services.JwtService;
-import jakarta.servlet.http.Cookie;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,18 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String jwt = null;
+        String jwt = jwtService.getJwtFromRequest(request);
         String username;
-
-        Cookie[] cookies = request.getCookies();
-        System.out.println("Cookies========================"+ Arrays.toString(cookies));
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("jwt")) {
-                    jwt = cookie.getValue();
-                }
-            }
-        }
 
         if (jwt == null) {
             filterChain.doFilter(request, response);
