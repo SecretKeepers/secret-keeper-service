@@ -1,0 +1,7 @@
+package com.secretkeeper.exceptions;
+
+public class UserCreationException extends RuntimeException {
+    public UserCreationException(String message) {
+        super(message);
+    }
+}

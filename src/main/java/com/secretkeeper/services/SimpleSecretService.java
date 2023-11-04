@@ -30,11 +30,14 @@ public class SimpleSecretService {
         return simpleSecretRepository.save(secret);
     }
 
-    public ResponseEntity<SimpleSecretResponse> getSecret(Long secretId, String masterKey){
+    public SimpleSecretResponse getSecret(Long secretId, String masterKey){
         User user = userService.getAuthUserFromToken();
+        //TODO
+        //if secret is found then verify secret type matches the one in request else throw error
+        //if secret not found then throw error: secret id or type invalid
         SimpleSecret secret = simpleSecretRepository.findByUserAndSecretId(user, secretId);
         String decryptedSecret = cryptoService.decrypt(secret.getSecretValue(), masterKey);
-        SimpleSecretResponse response = SimpleSecretResponse
+        return SimpleSecretResponse
                 .builder()
                 .id(secret.getSecretId())
                 .type(secret.getType())
@@ -42,7 +45,6 @@ public class SimpleSecretService {
                 .description(secret.getSecretDescription())
                 .createdAt(secret.getCreatedAt())
                 .build();
-        return ResponseEntity.ok(response);
     }
 
 }

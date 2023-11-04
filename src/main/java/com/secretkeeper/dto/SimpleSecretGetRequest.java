@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SimpleSecretGetRequest {
     private String masterKey;
+    private String type;
     private Long secretId;
 }

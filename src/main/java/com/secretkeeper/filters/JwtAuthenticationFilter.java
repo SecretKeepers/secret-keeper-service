@@ -1,6 +1,7 @@
 package com.secretkeeper.filters;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.secretkeeper.services.CustomUserDetailsService;
 import com.secretkeeper.services.JwtService;
@@ -39,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username;
 
         Cookie[] cookies = request.getCookies();
+        System.out.println("Cookies========================"+ Arrays.toString(cookies));
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("jwt")) {
