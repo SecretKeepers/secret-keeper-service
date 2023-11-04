@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,6 +54,16 @@ public class SimpleSecretService {
     public List<SimpleSecret> getAllSecrets() {
         User user = userService.getAuthUserFromToken();
         return simpleSecretRepository.findByUser(user);
+    }
+
+    public List<SimpleSecret> getAllSecretsDecrypted(String masterKey) {
+        User user = userService.getAuthUserFromToken();
+        List<SimpleSecret> secrets = simpleSecretRepository.findByUser(user);
+        for(SimpleSecret secret: secrets) {
+            String decipher = cryptoService.decrypt(secret.getSecretValue(), masterKey);
+            secret.setSecretValue(decipher);
+        }
+        return secrets;
     }
 
 }

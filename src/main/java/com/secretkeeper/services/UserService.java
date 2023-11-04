@@ -37,6 +37,11 @@ public class UserService {
         return passwordEncoder.matches(masterKey, user.getMasterKey());
     }
 
+    public boolean isMasterHashValid(String hash) {
+        User user = this.getAuthUserFromToken();
+        return hash.equals(user.getMasterKey());
+    }
+
     public User saveUser(User newUser) {
         return userRepository.save(newUser);
     }
