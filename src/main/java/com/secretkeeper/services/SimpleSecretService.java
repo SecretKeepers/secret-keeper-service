@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SimpleSecretService {
@@ -16,10 +19,11 @@ public class SimpleSecretService {
     private final CryptoService cryptoService;
     private final UserService userService;
 
-    public SimpleSecret saveSecret(SimpleSecretCreateRequest request) {
+    public SimpleSecret saveSecret(SimpleSecretCreateRequest request, String masterKey) {
         User user = userService.getAuthUserFromToken();
-
-        String encryptedSecret = cryptoService.encrypt(request.getSecret(), request.getMasterKey());
+        //TODO
+        //add validation for master key
+        String encryptedSecret = cryptoService.encrypt(request.getSecret(), masterKey);
         SimpleSecret secret = SimpleSecret
                 .builder()
                 .type(request.getType())
@@ -30,11 +34,14 @@ public class SimpleSecretService {
         return simpleSecretRepository.save(secret);
     }
 
-    public ResponseEntity<SimpleSecretResponse> getSecret(Long secretId, String masterKey){
+    public SimpleSecretResponse getSecret(Long secretId, String masterKey){
         User user = userService.getAuthUserFromToken();
+        //TODO
+        //if secret is found then verify secret type matches the one in request else throw error
+        //if secret not found then throw error: secret id or type invalid
         SimpleSecret secret = simpleSecretRepository.findByUserAndSecretId(user, secretId);
         String decryptedSecret = cryptoService.decrypt(secret.getSecretValue(), masterKey);
-        SimpleSecretResponse response = SimpleSecretResponse
+        return SimpleSecretResponse
                 .builder()
                 .id(secret.getSecretId())
                 .type(secret.getType())
@@ -42,7 +49,21 @@ public class SimpleSecretService {
                 .description(secret.getSecretDescription())
                 .createdAt(secret.getCreatedAt())
                 .build();
-        return ResponseEntity.ok(response);
+    }
+
+    public List<SimpleSecret> getAllSecrets() {
+        User user = userService.getAuthUserFromToken();
+        return simpleSecretRepository.findByUser(user);
+    }
+
+    public List<SimpleSecret> getAllSecretsDecrypted(String masterKey) {
+        User user = userService.getAuthUserFromToken();
+        List<SimpleSecret> secrets = simpleSecretRepository.findByUser(user);
+        for(SimpleSecret secret: secrets) {
+            String decipher = cryptoService.decrypt(secret.getSecretValue(), masterKey);
+            secret.setSecretValue(decipher);
+        }
+        return secrets;
     }
 
 }

@@ -18,17 +18,22 @@ import java.util.List;
 public class User implements UserDetails{
     @Id
     @GeneratedValue
+    @Column(updatable = false)
     private Long id;
 
     private String firstName;
     private String lastName;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @ToString.Exclude
+    @Column(nullable = false)
     private String password;
+    @ToString.Exclude
     private String masterKey;
 
+    @ToString.Exclude
     @JsonManagedReference(value = "user")
     @OneToMany(mappedBy = "user")
     private List<SimpleSecret> simpleSecrets;

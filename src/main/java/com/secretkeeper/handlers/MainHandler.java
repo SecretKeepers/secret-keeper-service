@@ -1,18 +1,20 @@
 package com.secretkeeper.handlers;
 
-import com.secretkeeper.dto.SetMasterKeyRequest;
 import com.secretkeeper.dto.SimpleSecretCreateRequest;
 import com.secretkeeper.dto.SimpleSecretGetRequest;
+import com.secretkeeper.dto.SimpleSecretResponse;
 import com.secretkeeper.entities.SimpleSecret;
+import com.secretkeeper.services.JwtService;
 import com.secretkeeper.services.SimpleSecretService;
 import com.secretkeeper.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/secret")
@@ -20,27 +22,55 @@ public class MainHandler {
 
     private final SimpleSecretService simpleSecretService;
     private final UserService userService;
+    private final JwtService jwtService;
 
-    @PostMapping("/simple/create")
-    public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest request){
-        if(!userService.isMasterKeyValid(request.getMasterKey())){
-            return ResponseEntity.badRequest().body("Master Key is invalid!");
+    @PostMapping("/create")
+    public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest secretRequest, HttpServletRequest request){
+        String token = jwtService.getJwtFromRequest(request);
+        String masterKey = jwtService.extractClaim(token, "masterKey");
+        if(!userService.isMasterHashValid(masterKey)){
+            return ResponseEntity.badRequest().body("Invalid master key!");
         }
-        SimpleSecret savedSecret = simpleSecretService.saveSecret(request);
-        return new ResponseEntity<>(savedSecret, HttpStatus.CREATED);
+        if(secretRequest.getType().equalsIgnoreCase("simple")) {
+            SimpleSecret savedSecret = simpleSecretService.saveSecret(secretRequest, masterKey);
+            return new ResponseEntity<>(savedSecret, HttpStatus.CREATED);
+        }
+        else return ResponseEntity.badRequest().body("Invalid secret type!");
     }
 
-    @PostMapping("/masterKey")
-    public ResponseEntity<?> setMasterKey(@RequestBody SetMasterKeyRequest request){
-        return userService.setMasterKey(request.getMasterKey());
+    @PostMapping("/get")
+    public ResponseEntity<?> getSimpleSecret(@RequestBody SimpleSecretGetRequest secretRequest, HttpServletRequest request){
+        String token = jwtService.getJwtFromRequest(request);
+        String masterKey = jwtService.extractClaim(token, "masterKey");
+        if(!userService.isMasterHashValid(masterKey)){
+            return ResponseEntity.badRequest().body("Invalid master key!");
+        }
+        if(secretRequest.getType().equalsIgnoreCase("simple")) {
+            SimpleSecretResponse secret = simpleSecretService.getSecret(secretRequest.getSecretId(), masterKey);
+            return ResponseEntity.ok(secret);
+        }
+        return ResponseEntity.badRequest().body("Invalid secret type!");
     }
 
-    @PostMapping("/simple/get")
-    public ResponseEntity<?> getSimpleSecret(@RequestBody SimpleSecretGetRequest request){
-        if(!userService.isMasterKeyValid(request.getMasterKey())){
-            return ResponseEntity.badRequest().body("Master Key is invalid!");
+    @GetMapping("/get/all/encrypted")
+    public ResponseEntity<?> getAllSecretsEncrypted(@RequestParam String type) {
+        if(type.equalsIgnoreCase("simple")) {
+            return ResponseEntity.ok(simpleSecretService.getAllSecrets());
         }
-        return simpleSecretService.getSecret(request.getSecretId(), request.getMasterKey());
+        return ResponseEntity.badRequest().body("Invalid secret type!");
+    }
+
+    @GetMapping("/get/all/decrypted")
+    public ResponseEntity<?> getAllSecretsDecrypted(@RequestParam String type, HttpServletRequest request) {
+        String token = jwtService.getJwtFromRequest(request);
+        String masterKey = jwtService.extractClaim(token, "masterKey");
+        if(!userService.isMasterHashValid(masterKey)){
+            return ResponseEntity.badRequest().body("Invalid master key!");
+        }
+        if(type.equalsIgnoreCase("simple")) {
+            return ResponseEntity.ok(simpleSecretService.getAllSecretsDecrypted(masterKey));
+        }
+        return ResponseEntity.badRequest().body("Invalid secret type!");
     }
 
     @GetMapping("/users")

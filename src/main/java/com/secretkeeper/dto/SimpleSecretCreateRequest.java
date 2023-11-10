@@ -13,5 +13,4 @@ public class SimpleSecretCreateRequest {
     private String type;
     private String secret;
     private String description;
-    private String masterKey;
 }

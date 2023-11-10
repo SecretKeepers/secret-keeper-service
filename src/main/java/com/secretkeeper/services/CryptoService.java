@@ -1,7 +1,6 @@
 package com.secretkeeper.services;
 
 import com.secretkeeper.configs.CryptoConfig;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Service
@@ -46,6 +44,8 @@ public class CryptoService {
 
     public String decrypt(String encryptedValue, String password) {
         try {
+            //TODO
+            //assert password is not null
             // Create a key using password-based key derivation
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec keySpec = new PBEKeySpec(password.toCharArray(), cryptoConfig.getSalt(), 65536, 256); // You can adjust these parameters

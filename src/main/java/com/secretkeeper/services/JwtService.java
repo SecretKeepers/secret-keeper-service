@@ -4,6 +4,8 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +22,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 
     @Value("${token.secret.key}")
-    String jwtSecretKey;
+    private String jwtSecretKey;
 
     @Value("${token.expirationms}")
-    Long jwtExpirationMs;
+    private Long jwtExpirationMs;
 
     private final Set<String> blacklist = new HashSet<>();
 
@@ -31,8 +33,29 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String getJwtFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String extractClaim(String token, String claim) {
+        Claims claims = extractAllClaims(token);
+        return claims.get(claim, String.class);
+    }
+
+    public String generateToken(String subject) {
+        return generateToken(new HashMap<>(), subject);
+    }
+
+    public String generateToken(String subject, Map<String, Object> extraClaims){
+        return generateToken(extraClaims, subject);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -45,11 +68,11 @@ public class JwtService {
         return claimsResolvers.apply(claims);
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, String username) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
