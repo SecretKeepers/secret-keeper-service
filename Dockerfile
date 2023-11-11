@@ -1,20 +1,17 @@
-# Stage 1: Build the Spring Boot application
-FROM openjdk:17
+# Use an official Maven runtime as a parent image
+FROM maven:3.8.4-openjdk-17-slim
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy the Spring Boot project source code to the container
-COPY . /app
+# Copy the Maven project files into the container
+COPY . .
 
-# Build the application using Maven
-RUN ./mvnw clean install -Dmaven.test.skip=true
-
-# Copy the built JAR
-COPY target/service-1.0.jar /app/app.jar
+# Build the Maven project
+RUN mvn clean install -Dmaven.test.skip=true
 
 # Expose the port that your Spring Boot app is listening on (change this to your app's port)
 EXPOSE 8080
 
 # Define the command to run your Spring Boot application
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "target/service-1.0.jar"]
