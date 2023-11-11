@@ -1,5 +1,6 @@
 package com.secretkeeper.services;
 
+import com.secretkeeper.constants.Responses;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
 import com.secretkeeper.entities.User;
@@ -52,7 +53,7 @@ public class AuthenticationService {
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             UserDetails user = userDetailsService.loadUserByUsername(request.getUsername());
             if (user == null) {
-                throw new IllegalArgumentException("Invalid email or password.");
+                throw new IllegalArgumentException(Responses.INVALID_USER_PASSWD.getMsg());
             }
             String jwt = jwtService.generateToken(user.getUsername());
             Cookie cookie = new Cookie("jwt", jwt);
@@ -63,7 +64,7 @@ public class AuthenticationService {
             response.addCookie(cookie);
             return HttpStatus.OK;
         } catch (AuthenticationException e) {
-            throw new AuthenticationException("Invalid email or password!");
+            throw new AuthenticationException(Responses.INVALID_USER_PASSWD.getMsg());
         } catch (Exception e) {
             throw new AuthenticationServiceException("An error occurred during sign in!");
         }

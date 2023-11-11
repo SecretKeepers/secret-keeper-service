@@ -1,5 +1,6 @@
 package com.secretkeeper.handlers;
 
+import com.secretkeeper.constants.Responses;
 import com.secretkeeper.dto.SetMasterKeyRequest;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
@@ -55,7 +56,7 @@ public class AuthHandler {
                 return ResponseEntity.status(httpStatus).body("Sign in failed!");
             }
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Responses.INVALID_USER_PASSWD.getMsg());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during sign in!");
         }
@@ -81,7 +82,7 @@ public class AuthHandler {
         if (status == HttpStatus.OK) {
             return ResponseEntity.ok("Success");
         } else {
-            return ResponseEntity.status(status).body("Invalid master key!");
+            return ResponseEntity.status(status).body(Responses.INVALID_MASTER_KEY.getMsg());
         }
     }
 

@@ -1,5 +1,7 @@
 package com.secretkeeper.handlers;
 
+import com.secretkeeper.constants.Responses;
+import com.secretkeeper.constants.SecretTypes;
 import com.secretkeeper.dto.SimpleSecretCreateRequest;
 import com.secretkeeper.dto.SimpleSecretGetRequest;
 import com.secretkeeper.dto.SimpleSecretResponse;
@@ -23,20 +25,19 @@ public class MainHandler {
     private final SimpleSecretService simpleSecretService;
     private final UserService userService;
     private final JwtService jwtService;
-    private static final String ACTION_1 = "Invalid secret type!";
 
     @PostMapping("/create")
     public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest secretRequest, HttpServletRequest request){
         String token = jwtService.getJwtFromRequest(request);
         String masterKey = jwtService.extractClaim(token, "masterKey");
         if(!userService.isMasterHashValid(masterKey)){
-            return ResponseEntity.badRequest().body("Invalid master key!");
+            return ResponseEntity.badRequest().body(Responses.INVALID_MASTER_KEY.getMsg());
         }
-        if(secretRequest.getType().equalsIgnoreCase("simple")) {
+        if(secretRequest.getType().equalsIgnoreCase(SecretTypes.SIMPLE.getType())) {
             SimpleSecret savedSecret = simpleSecretService.saveSecret(secretRequest, masterKey);
             return new ResponseEntity<>(savedSecret, HttpStatus.CREATED);
         }
-        else return ResponseEntity.badRequest().body(ACTION_1);
+        else return ResponseEntity.badRequest().body(Responses.INVALID_SECRET_TYPE.getMsg());
     }
 
     @PostMapping("/get")
@@ -44,21 +45,21 @@ public class MainHandler {
         String token = jwtService.getJwtFromRequest(request);
         String masterKey = jwtService.extractClaim(token, "masterKey");
         if(!userService.isMasterHashValid(masterKey)){
-            return ResponseEntity.badRequest().body("Invalid master key!");
+            return ResponseEntity.badRequest().body(Responses.INVALID_MASTER_KEY.getMsg());
         }
-        if(secretRequest.getType().equalsIgnoreCase("simple")) {
+        if(secretRequest.getType().equalsIgnoreCase(SecretTypes.SIMPLE.getType())) {
             SimpleSecretResponse secret = simpleSecretService.getSecret(secretRequest.getSecretId(), masterKey);
             return ResponseEntity.ok(secret);
         }
-        return ResponseEntity.badRequest().body(ACTION_1);
+        return ResponseEntity.badRequest().body(Responses.INVALID_SECRET_TYPE.getMsg());
     }
 
     @GetMapping("/get/all/encrypted")
     public ResponseEntity<?> getAllSecretsEncrypted(@RequestParam String type) {
-        if(type.equalsIgnoreCase("simple")) {
+        if(type.equalsIgnoreCase(SecretTypes.SIMPLE.getType())) {
             return ResponseEntity.ok(simpleSecretService.getAllSecrets());
         }
-        return ResponseEntity.badRequest().body(ACTION_1);
+        return ResponseEntity.badRequest().body(Responses.INVALID_SECRET_TYPE.getMsg());
     }
 
     @GetMapping("/get/all/decrypted")
@@ -66,12 +67,12 @@ public class MainHandler {
         String token = jwtService.getJwtFromRequest(request);
         String masterKey = jwtService.extractClaim(token, "masterKey");
         if(!userService.isMasterHashValid(masterKey)){
-            return ResponseEntity.badRequest().body("Invalid master key!");
+            return ResponseEntity.badRequest().body(Responses.INVALID_MASTER_KEY.getMsg());
         }
-        if(type.equalsIgnoreCase("simple")) {
+        if(type.equalsIgnoreCase(SecretTypes.SIMPLE.getType())) {
             return ResponseEntity.ok(simpleSecretService.getAllSecretsDecrypted(masterKey));
         }
-        return ResponseEntity.badRequest().body(ACTION_1);
+        return ResponseEntity.badRequest().body(Responses.INVALID_SECRET_TYPE.getMsg());
     }
 
     @GetMapping("/users")
