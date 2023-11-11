@@ -24,7 +24,7 @@ public class AuthHandler {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpRequest request) {
+    public ResponseEntity signup(@RequestBody SignUpRequest request) {
         try {
             User user = authenticationService.signup(request);
             return ResponseEntity.ok("User registered successfully with ID: " + user.getId());
@@ -38,7 +38,7 @@ public class AuthHandler {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody SignInRequest request, HttpServletResponse response) {
+    public ResponseEntity signin(@RequestBody SignInRequest request, HttpServletResponse response) {
         try {
             HttpStatus httpStatus = authenticationService.signin(request, response);
             if (httpStatus == HttpStatus.OK) {
@@ -54,7 +54,7 @@ public class AuthHandler {
     }
 
     @PostMapping("/master/set")
-    public ResponseEntity<?> setMasterKey(@RequestBody SetMasterKeyRequest request){
+    public ResponseEntity setMasterKey(@RequestBody SetMasterKeyRequest request){
         return userService.setMasterKey(request.getMasterKey());
     }
 

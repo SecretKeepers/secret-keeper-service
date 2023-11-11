@@ -23,6 +23,7 @@ public class MainHandler {
     private final SimpleSecretService simpleSecretService;
     private final UserService userService;
     private final JwtService jwtService;
+    private static final String ACTION_1 = "Invalid secret type!";
 
     @PostMapping("/create")
     public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest secretRequest, HttpServletRequest request){
@@ -35,7 +36,7 @@ public class MainHandler {
             SimpleSecret savedSecret = simpleSecretService.saveSecret(secretRequest, masterKey);
             return new ResponseEntity<>(savedSecret, HttpStatus.CREATED);
         }
-        else return ResponseEntity.badRequest().body("Invalid secret type!");
+        else return ResponseEntity.badRequest().body(ACTION_1);
     }
 
     @PostMapping("/get")
@@ -49,7 +50,7 @@ public class MainHandler {
             SimpleSecretResponse secret = simpleSecretService.getSecret(secretRequest.getSecretId(), masterKey);
             return ResponseEntity.ok(secret);
         }
-        return ResponseEntity.badRequest().body("Invalid secret type!");
+        return ResponseEntity.badRequest().body(ACTION_1);
     }
 
     @GetMapping("/get/all/encrypted")
@@ -70,7 +71,7 @@ public class MainHandler {
         if(type.equalsIgnoreCase("simple")) {
             return ResponseEntity.ok(simpleSecretService.getAllSecretsDecrypted(masterKey));
         }
-        return ResponseEntity.badRequest().body("Invalid secret type!");
+        return ResponseEntity.badRequest().body(ACTION_1);
     }
 
     @GetMapping("/users")
