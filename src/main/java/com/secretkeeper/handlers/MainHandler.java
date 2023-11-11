@@ -58,7 +58,7 @@ public class MainHandler {
         if(type.equalsIgnoreCase("simple")) {
             return ResponseEntity.ok(simpleSecretService.getAllSecrets());
         }
-        return ResponseEntity.badRequest().body("Invalid secret type!");
+        return ResponseEntity.badRequest().body(ACTION_1);
     }
 
     @GetMapping("/get/all/decrypted")
