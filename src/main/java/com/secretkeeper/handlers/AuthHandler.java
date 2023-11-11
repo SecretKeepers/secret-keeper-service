@@ -37,6 +37,14 @@ public class AuthHandler {
         }
     }
 
+    @GetMapping("/username")
+    public ResponseEntity<?> validateUsername(@RequestParam String username) {
+        if(authenticationService.userExist(username)){
+            return ResponseEntity.badRequest().body("User with username "+username+" already exists!");
+        }
+        else return ResponseEntity.ok("Username is available");
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody SignInRequest request, HttpServletResponse response) {
         try {
