@@ -17,6 +17,6 @@ II. In the project root run the command- `docker compose up` and wait for it to 
 III. Secret service should be running at http://localhost:8080
 
 ### API Info
-- Only /signin and /register APIs are public
+- Only /signin and /signup APIs are public
 - For accessing any other API you must be logged in first
 - Find the list of APIs available in handlers package
