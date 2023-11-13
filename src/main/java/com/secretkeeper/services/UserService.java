@@ -1,5 +1,6 @@
 package com.secretkeeper.services;
 
+import com.secretkeeper.dto.SignInResponse;
 import com.secretkeeper.entities.User;
 import com.secretkeeper.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public ResponseEntity<?> setMasterKey(String masterKey){
+        //TODO remove ResponseEntity from this class
         User user = this.getAuthUserFromToken();
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -37,11 +39,6 @@ public class UserService {
         return passwordEncoder.matches(masterKey, user.getMasterKey());
     }
 
-    public boolean isMasterHashValid(String hash) {
-        User user = this.getAuthUserFromToken();
-        return hash.equals(user.getMasterKey());
-    }
-
     public User saveUser(User newUser) {
         return userRepository.save(newUser);
     }
@@ -52,5 +49,14 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public SignInResponse getSignInResponse(String username) {
+        User user = userRepository.findByUsername(username);
+        return SignInResponse.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .masterKeySet(user.getMasterKey() != null)
+                .build();
+    }
 }
 

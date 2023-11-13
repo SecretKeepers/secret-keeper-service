@@ -2,6 +2,8 @@ spring:
   profiles:
     active: dev
 
+spring.servlet.multipart.max-file-size: 128KB
+spring.servlet.multipart.max-request-size: 128KB
 ---
 
 spring:
@@ -40,4 +42,3 @@ token:
 
 crypto:
   salt: DED98215179DB291C445270E6E48AFF1
-  iv: 52331BCDDE7DD5FDB42B8FFDECEA9448

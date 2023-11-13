@@ -1,6 +1,14 @@
 package com.secretkeeper.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.MappedSuperclass;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +23,9 @@ import java.util.Date;
 @Getter
 public class Secret {
     @Id
-    @GeneratedValue
-    private Long secretId;
-
-    private String type;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String secretId;
+    private String secretType;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
