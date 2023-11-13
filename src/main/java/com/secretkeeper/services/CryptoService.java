@@ -22,7 +22,6 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class CryptoService {
-
     @Autowired
     private final CryptoConfig cryptoConfig;
     private static final String AES = "AES";

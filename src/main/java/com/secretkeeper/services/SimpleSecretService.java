@@ -6,10 +6,8 @@ import com.secretkeeper.entities.SimpleSecret;
 import com.secretkeeper.entities.User;
 import com.secretkeeper.repositories.SimpleSecretRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,12 +19,10 @@ public class SimpleSecretService {
 
     public SimpleSecret saveSecret(SimpleSecretCreateRequest request, String masterKey) {
         User user = userService.getAuthUserFromToken();
-        //TODO
-        //add validation for master key
         String encryptedSecret = cryptoService.encrypt(request.getSecret(), masterKey);
         SimpleSecret secret = SimpleSecret
                 .builder()
-                .type(request.getType())
+                .secretType(request.getType())
                 .secretValue(encryptedSecret)
                 .secretDescription(request.getDescription())
                 .user(user)
@@ -34,7 +30,7 @@ public class SimpleSecretService {
         return simpleSecretRepository.save(secret);
     }
 
-    public SimpleSecretResponse getSecret(Long secretId, String masterKey){
+    public SimpleSecretResponse getSecret(String secretId, String masterKey){
         User user = userService.getAuthUserFromToken();
         //TODO
         //if secret is found then verify secret type matches the one in request else throw error
@@ -44,7 +40,7 @@ public class SimpleSecretService {
         return SimpleSecretResponse
                 .builder()
                 .id(secret.getSecretId())
-                .type(secret.getType())
+                .type(secret.getSecretType())
                 .secret(decryptedSecret)
                 .description(secret.getSecretDescription())
                 .createdAt(secret.getCreatedAt())

@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SimpleSecretRepository extends JpaRepository<SimpleSecret, Long> {
-    SimpleSecret findBySecretId(Long secretId);
-    SimpleSecret findByUserAndSecretId(User user, Long secretId);
+public interface SimpleSecretRepository extends JpaRepository<SimpleSecret, String> {
+    SimpleSecret findBySecretId(String secretId);
+    SimpleSecret findByUserAndSecretId(User user, String secretId);
     List<SimpleSecret> findByUser(User user);
 }

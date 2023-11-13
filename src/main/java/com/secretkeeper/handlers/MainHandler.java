@@ -27,6 +27,7 @@ public class MainHandler {
     private final JwtService jwtService;
 
     @PostMapping("/create")
+    //TODO validate content type and call respective service
     public ResponseEntity<?> simpleSecretAdd(@RequestBody SimpleSecretCreateRequest secretRequest, HttpServletRequest request){
         String token = jwtService.getJwtFromRequest(request);
         String masterKey = jwtService.extractClaim(token, "masterKey");

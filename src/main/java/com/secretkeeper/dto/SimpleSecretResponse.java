@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleSecretResponse {
-    private Long id;
+    private String id;
     private String type;
     private String secret;
     private String description;
