@@ -27,4 +27,6 @@ public class CryptoUtils {
         SecretKey tmp = factory.generateSecret(keySpec);
         return new SecretKeySpec(tmp.getEncoded(), AES.getStrValue());
     }
+    
+    private CryptoUtils() {}
 }

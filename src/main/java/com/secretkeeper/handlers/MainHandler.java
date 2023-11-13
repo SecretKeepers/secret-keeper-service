@@ -8,7 +8,6 @@ import com.secretkeeper.dto.SimpleSecretResponse;
 import com.secretkeeper.entities.SimpleSecret;
 import com.secretkeeper.services.JwtService;
 import com.secretkeeper.services.SimpleSecretService;
-import com.secretkeeper.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +49,7 @@ public class MainHandler {
     @GetMapping("/get/all/encrypted")
     public ResponseEntity<?> getAllSecretsEncrypted(@RequestParam String type) {
         if(type.equalsIgnoreCase(SecretTypes.SIMPLE.getType())) {
-            return ResponseEntity.ok(simpleSecretService.getAllSecrets());
+            return ResponseEntity.ok(simpleSecretService.getAllSecretsEncrypted());
         }
         return ResponseEntity.badRequest().body(Responses.INVALID_SECRET_TYPE.getMsg());
     }
