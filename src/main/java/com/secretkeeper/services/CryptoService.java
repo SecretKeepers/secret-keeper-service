@@ -1,54 +1,47 @@
 package com.secretkeeper.services;
 
-import com.secretkeeper.configs.CryptoConfig;
+import com.secretkeeper.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
+import javax.crypto.spec.GCMParameterSpec;
+import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.Objects;
+
+import static com.secretkeeper.constants.CryptoConstants.CIPHER_ALGORITHM;
+import static com.secretkeeper.constants.CryptoConstants.IV_SIZE_BYTES;
+import static com.secretkeeper.constants.CryptoConstants.SALT_SIZE_BYTES;
+import static com.secretkeeper.constants.CryptoConstants.TAG_SIZE_BITS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 @RequiredArgsConstructor
 public class CryptoService {
-    @Autowired
-    private final CryptoConfig cryptoConfig;
-    private static final String AES = "AES";
-    private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
-    private static final String SECRET_KEY_ALGORITHM = "PBKDF2WithHmacSHA256";
-    private static final int IV_SIZE = 16;
 
     public String encrypt(String value, String password) {
         Objects.requireNonNull(value, "Value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
-            byte[] iv = generateIV(); // Generate a random IV
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            byte[] iv = CryptoUtils.generateRandomBytes(IV_SIZE_BYTES.getIntValue());
+            byte[] salt = CryptoUtils.generateRandomBytes(SALT_SIZE_BYTES.getIntValue());
             // Create a key using password-based key derivation
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
-            KeySpec keySpec = new PBEKeySpec(password.toCharArray(), cryptoConfig.getSalt(), 65536, 256);
-            SecretKey tmp = factory.generateSecret(keySpec);
-            SecretKey secret = new SecretKeySpec(tmp.getEncoded(), AES);
-
-            // Encrypt the data using AES-CBC
-            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-            cipher.init(Cipher.ENCRYPT_MODE, secret, ivParameterSpec);
-            byte[] encryptedBytes = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
-            byte[] encBytesWithIV = new byte[iv.length + encryptedBytes.length];
-            System.arraycopy(iv, 0, encBytesWithIV, 0, iv.length);
-            System.arraycopy(encryptedBytes, 0, encBytesWithIV, iv.length, encryptedBytes.length);
-            return Base64.getEncoder().encodeToString(encBytesWithIV);
+            SecretKey secret = CryptoUtils.secretKeyFromPassword(password, salt);
+            // Encrypt the data using AES-GCM
+            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM.getStrValue());
+            cipher.init(Cipher.ENCRYPT_MODE, secret, new GCMParameterSpec(TAG_SIZE_BITS.getIntValue(), iv));
+            byte[] encryptedBytes = cipher.doFinal(value.getBytes(UTF_8));
+            byte[] encBytesWithIVSalt = ByteBuffer.allocate(iv.length + salt.length + encryptedBytes.length)
+                    .put(iv)
+                    .put(salt)
+                    .put(encryptedBytes)
+                    .array();
+            return Base64.getEncoder().encodeToString(encBytesWithIVSalt);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                  IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                  InvalidKeyException | InvalidAlgorithmParameterException e) {
@@ -60,28 +53,25 @@ public class CryptoService {
         Objects.requireNonNull(encryptedValue, "Encrypted value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
-            byte[] encBytesWithIV = Base64.getDecoder().decode(encryptedValue);
-
+            byte[] encWithIVSalt = Base64.getDecoder().decode(encryptedValue.getBytes(UTF_8));
+            ByteBuffer encByteBuffer = ByteBuffer.wrap(encWithIVSalt);
             // Extract IV from cipher + iv
-            byte[] iv = new byte[IV_SIZE];
-            System.arraycopy(encBytesWithIV, 0, iv, 0, iv.length);
-            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            byte[] iv = new byte[IV_SIZE_BYTES.getIntValue()];
+            encByteBuffer.get(iv);
 
-            // Extract cipher text from cipher + iv
-            byte[] ciphertext = new byte[encBytesWithIV.length - iv.length];
-            System.arraycopy(encBytesWithIV, iv.length, ciphertext, 0, ciphertext.length);
+            byte[] salt = new byte[SALT_SIZE_BYTES.getIntValue()];
+            encByteBuffer.get(salt);
 
-            // Create a key using password-based key derivation
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_ALGORITHM);
-            KeySpec keySpec = new PBEKeySpec(password.toCharArray(), cryptoConfig.getSalt(), 65536, 256);
-            SecretKey tmp = factory.generateSecret(keySpec);
-            SecretKey secret = new SecretKeySpec(tmp.getEncoded(), AES);
+            byte[] cipherText = new byte[encByteBuffer.remaining()];
+            encByteBuffer.get(cipherText);
+
+            SecretKey secret = CryptoUtils.secretKeyFromPassword(password, salt);
 
             // Decrypt the data using AES-CBC
-            Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
-            cipher.init(Cipher.DECRYPT_MODE, secret, ivParameterSpec);
-            byte[] decryptedBytes = cipher.doFinal(ciphertext);
-            return new String(decryptedBytes, StandardCharsets.UTF_8);
+            Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM.getStrValue());
+            cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_SIZE_BITS.getIntValue(), iv));
+            byte[] decryptedBytes = cipher.doFinal(cipherText);
+            return new String(decryptedBytes, UTF_8);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                  IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                  InvalidKeyException | InvalidAlgorithmParameterException e) {
@@ -89,10 +79,4 @@ public class CryptoService {
         }
     }
 
-    private byte[] generateIV() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] iv = new byte[IV_SIZE];
-        secureRandom.nextBytes(iv);
-        return iv;
-    }
 }
