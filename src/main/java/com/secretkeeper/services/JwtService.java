@@ -7,6 +7,7 @@ import java.util.function.Function;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,21 +21,19 @@ import io.jsonwebtoken.security.Keys;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-
     @Value("${token.secret.key}")
     private String jwtSecretKey;
-
     @Value("${token.expirationms}")
     private Long jwtExpirationMs;
-
+    @Autowired
+    private final HttpServletRequest httpServletRequest;
     private final Set<String> blacklist = new HashSet<>();
-
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String getJwtFromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
+    public String getJwtFromRequest() {
+        Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("jwt")) {
