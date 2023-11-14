@@ -18,7 +18,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class SimpleSecret extends Secret {
     private String secretValue;
-    private String secretDescription;
 
     @JsonBackReference(value = "user_id")
     @ManyToOne

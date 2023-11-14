@@ -24,7 +24,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public class CryptoService {
 
-    public byte[] encrypt(byte[] value, String password) {
+    private byte[] encrypt(byte[] value, String password) {
         Objects.requireNonNull(value, "Value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
@@ -49,7 +49,7 @@ public class CryptoService {
         }
     }
 
-    public byte[] decrypt(byte[] encryptedValue, String password) {
+    private byte[] decrypt(byte[] encryptedValue, String password) {
         Objects.requireNonNull(encryptedValue, "Encrypted value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
@@ -84,6 +84,14 @@ public class CryptoService {
 
     public String decryptText(final String text, final String password) {
         return new String(decrypt(text.getBytes(UTF_8), password));
+    }
+
+    public byte[] encryptFile(byte[] data, String password) {
+        return encrypt(data, password);
+    }
+
+    public byte[] decryptFile(byte[] data, String password) {
+        return decrypt(data, password);
     }
 
 }
