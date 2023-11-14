@@ -18,14 +18,13 @@ public class SimpleSecretService {
     private final UserService userService;
 
     public SimpleSecret saveSecret(SimpleSecretCreateRequest request, String masterKey) {
-        User user = userService.getAuthUserFromToken();
-        String encryptedSecret = cryptoService.encrypt(request.getSecret(), masterKey);
+        String encryptedSecret = cryptoService.encryptText(request.getSecret(), masterKey);
         SimpleSecret secret = SimpleSecret
                 .builder()
                 .secretType(request.getType())
                 .secretValue(encryptedSecret)
                 .secretDescription(request.getDescription())
-                .user(user)
+                .user(userService.getAuthUserFromToken())
                 .build();
         return simpleSecretRepository.save(secret);
     }
@@ -36,7 +35,7 @@ public class SimpleSecretService {
         //if secret is found then verify secret type matches the one in request else throw error
         //if secret not found then throw error: secret id or type invalid
         SimpleSecret secret = simpleSecretRepository.findByUserAndSecretId(user, secretId);
-        String decryptedSecret = cryptoService.decrypt(secret.getSecretValue(), masterKey);
+        String decryptedSecret = cryptoService.decryptText(secret.getSecretValue(), masterKey);
         return SimpleSecretResponse
                 .builder()
                 .id(secret.getSecretId())
@@ -47,16 +46,15 @@ public class SimpleSecretService {
                 .build();
     }
 
-    public List<SimpleSecret> getAllSecrets() {
-        User user = userService.getAuthUserFromToken();
-        return simpleSecretRepository.findByUser(user);
+    public List<SimpleSecret> getAllSecretsEncrypted() {
+        return simpleSecretRepository.findByUser(userService.getAuthUserFromToken());
     }
 
     public List<SimpleSecret> getAllSecretsDecrypted(String masterKey) {
         User user = userService.getAuthUserFromToken();
         List<SimpleSecret> secrets = simpleSecretRepository.findByUser(user);
         for(SimpleSecret secret: secrets) {
-            String decipher = cryptoService.decrypt(secret.getSecretValue(), masterKey);
+            String decipher = cryptoService.decryptText(secret.getSecretValue(), masterKey);
             secret.setSecretValue(decipher);
         }
         return secrets;

@@ -1,6 +1,8 @@
 package com.secretkeeper.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Getter
 @NoArgsConstructor

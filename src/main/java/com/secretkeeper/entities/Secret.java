@@ -26,7 +26,7 @@ public class Secret {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String secretId;
     private String secretType;
-
+    private String secretDescription;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
     private Date createdAt;

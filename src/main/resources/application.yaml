@@ -2,8 +2,8 @@ spring:
   profiles:
     active: dev
 
-spring.servlet.multipart.max-file-size: 128KB
-spring.servlet.multipart.max-request-size: 128KB
+spring.servlet.multipart.max-file-size: 1024KB
+spring.servlet.multipart.max-request-size: 1024KB
 ---
 
 spring:
@@ -39,6 +39,3 @@ token:
   expirationms: 21600000 #6 hours
   secret:
     key: fbf9f806500c3b7bc652f7ed856b83adb369aa2b11c3a006bc546890e9b4e97b
-
-crypto:
-  salt: DED98215179DB291C445270E6E48AFF1

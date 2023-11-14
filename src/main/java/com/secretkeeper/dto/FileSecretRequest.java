@@ -1,14 +1,14 @@
 package com.secretkeeper.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleSecretCreateRequest {
-    private String type;
-    private String secret;
+public class FileSecretRequest {
+    private MultipartFile file;
     private String description;
 }

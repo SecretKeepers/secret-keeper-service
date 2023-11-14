@@ -24,7 +24,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public class CryptoService {
 
-    public String encrypt(String value, String password) {
+    private byte[] encrypt(byte[] value, String password) {
         Objects.requireNonNull(value, "Value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
@@ -35,13 +35,13 @@ public class CryptoService {
             // Encrypt the data using AES-GCM
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM.getStrValue());
             cipher.init(Cipher.ENCRYPT_MODE, secret, new GCMParameterSpec(TAG_SIZE_BITS.getIntValue(), iv));
-            byte[] encryptedBytes = cipher.doFinal(value.getBytes(UTF_8));
+            byte[] encryptedBytes = cipher.doFinal(value);
             byte[] encBytesWithIVSalt = ByteBuffer.allocate(iv.length + salt.length + encryptedBytes.length)
                     .put(iv)
                     .put(salt)
                     .put(encryptedBytes)
                     .array();
-            return Base64.getEncoder().encodeToString(encBytesWithIVSalt);
+            return Base64.getEncoder().encode(encBytesWithIVSalt);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                  IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                  InvalidKeyException | InvalidAlgorithmParameterException e) {
@@ -49,13 +49,13 @@ public class CryptoService {
         }
     }
 
-    public String decrypt(String encryptedValue, String password) {
+    private byte[] decrypt(byte[] encryptedValue, String password) {
         Objects.requireNonNull(encryptedValue, "Encrypted value cannot be null!");
         Objects.requireNonNull(password, "Password cannot be null!");
         try {
-            byte[] encWithIVSalt = Base64.getDecoder().decode(encryptedValue.getBytes(UTF_8));
+            byte[] encWithIVSalt = Base64.getDecoder().decode(encryptedValue);
             ByteBuffer encByteBuffer = ByteBuffer.wrap(encWithIVSalt);
-            // Extract IV from cipher + iv
+            // Extract IV from cipher + iv + salt
             byte[] iv = new byte[IV_SIZE_BYTES.getIntValue()];
             encByteBuffer.get(iv);
 
@@ -70,13 +70,28 @@ public class CryptoService {
             // Decrypt the data using AES-CBC
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM.getStrValue());
             cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_SIZE_BITS.getIntValue(), iv));
-            byte[] decryptedBytes = cipher.doFinal(cipherText);
-            return new String(decryptedBytes, UTF_8);
+            return cipher.doFinal(cipherText);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                  IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                  InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new RuntimeException("Encryption failed", e);
         }
+    }
+
+    public String encryptText(final String text, final String password) {
+        return new String(encrypt(text.getBytes(UTF_8), password));
+    }
+
+    public String decryptText(final String text, final String password) {
+        return new String(decrypt(text.getBytes(UTF_8), password));
+    }
+
+    public byte[] encryptFile(byte[] data, String password) {
+        return encrypt(data, password);
+    }
+
+    public byte[] decryptFile(byte[] data, String password) {
+        return decrypt(data, password);
     }
 
 }

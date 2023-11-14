@@ -18,6 +18,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import static com.secretkeeper.constants.HandlerConstants.MASTER_KEY;
+
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -108,4 +110,8 @@ public class JwtService {
         return blacklist.contains(token);
     }
 
+    public String getMasterKeyFromJWT() {
+        String token = getJwtFromRequest();
+        return extractClaim(token, MASTER_KEY.getValue());
+    }
 }

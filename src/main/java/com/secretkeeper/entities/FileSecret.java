@@ -1,10 +1,7 @@
 package com.secretkeeper.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +17,9 @@ import lombok.experimental.SuperBuilder;
 public class FileSecret extends Secret{
     private String fileType;
     private String fileName;
+    private Long fileSize;
     @Lob
+    @Column(name = "data", columnDefinition="LONGBLOB")
     private byte[] data;
 
     @JsonBackReference(value = "user_id")
