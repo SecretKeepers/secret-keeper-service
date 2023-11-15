@@ -10,7 +10,7 @@ COPY . .
 # Build the Maven project
 RUN mvn clean install -Dmaven.test.skip=true
 
-# Expose the port that your Spring Boot app is listening on (change this to your app's port)
+# Expose the port that your Spring Boot app is listening on
 EXPOSE 8080
 
 # Define the command to run your Spring Boot application
