@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
