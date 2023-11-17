@@ -26,7 +26,7 @@ public class FileSecretService {
     private final FileSecretRepository fileStore;
     private final CryptoService cryptoService;
     @Transactional
-    public FileSecret save(MultipartFile file, String description, String masterKey) {
+    public FileSecret save(MultipartFile file, String description, String masterKey) throws Exception {
 
         try {
             FileSecret secret = FileSecret
@@ -45,7 +45,7 @@ public class FileSecretService {
             }
             return fileStore.save(secret);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new Exception();
         }
     }
 
