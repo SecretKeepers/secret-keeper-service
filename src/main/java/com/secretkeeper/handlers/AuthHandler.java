@@ -4,6 +4,7 @@ import com.secretkeeper.constants.Responses;
 import com.secretkeeper.dto.SetMasterKeyRequest;
 import com.secretkeeper.dto.SignInRequest;
 import com.secretkeeper.dto.SignUpRequest;
+import com.secretkeeper.entities.User;
 import com.secretkeeper.exceptions.AuthenticationException;
 import com.secretkeeper.exceptions.UserCreationException;
 import com.secretkeeper.services.AuthenticationService;
@@ -30,6 +31,7 @@ public class AuthHandler {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest) {
         try {
+            authenticationService.signup(signUpRequest);
             return ResponseEntity.ok("User registered successfully");
         } catch (UserCreationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

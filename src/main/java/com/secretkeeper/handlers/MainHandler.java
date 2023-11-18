@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+//TODO add exceptions for masterKey not present
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
