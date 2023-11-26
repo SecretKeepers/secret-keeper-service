@@ -54,13 +54,13 @@ pipeline {
             }
         }
 
-        //stage('Deploy') {
-        //    steps {
-        //        script {
-        //            sh "ansible-playbook -i inventory deploy.yml"
-        //        }
-        //    }
-        //}
+        stage('Deploy') {
+            steps {
+                script {
+                    sh "ansible-playbook -i /etc/ansible/hosts secret-deploy.yml"
+                }
+            }
+        }
     }
 
     post {
