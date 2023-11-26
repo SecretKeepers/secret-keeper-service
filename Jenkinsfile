@@ -56,15 +56,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                ansiblePlaybook colorized: true,
-                            credentialsId: 'ansible-secret-server',
-                            limit: "secret",
-                            installation: 'ansible',
-                            inventory: '/etc/ansible/hosts',
-                            playbook: 'secret-deploy.yml',
-                            sudo: true,
-                            sudoUser: 'ubuntu'
-                }
+                ansiblePlaybook(
+                    colorized: true,
+                    credentialsId: 'ansible-secret-server',
+                    inventory: '/etc/ansible/hosts',
+                    playbook: 'secret-deploy.yml',
+                    sudo: true,
+                    sudoUser: 'ubuntu'
+                )
             }
         }
     }
