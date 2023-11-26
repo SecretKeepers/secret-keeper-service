@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven '3.8.8'
+    }
+
     environment {
         DOCKER_IMAGE_NAME = "secret-service"
     }
