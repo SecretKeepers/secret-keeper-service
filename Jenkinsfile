@@ -57,8 +57,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ansible-secret-server', keyFileVariable: 'SSH_KEY')]) {
-                        sh "ansible-playbook -i /etc/ansible/hosts --private-key=$SSH_KEY secret-deploy.yml"
+                    withCredentials([file(credentialsId: 'secret-server-ssh', variable: 'SSH_KEY_FILE')]) {
+                        sh "ansible-playbook -i /etc/ansible/hosts --user ubuntu --key-file $SSH_KEY_FILE secret-deploy.yml"
                     }
                 }
             }
