@@ -61,8 +61,6 @@ pipeline {
                     credentialsId: 'ansible-secret-server',
                     inventory: '/etc/ansible/hosts',
                     playbook: 'secret-deploy.yml',
-                    sudo: true,
-                    sudoUser: 'ubuntu'
                 )
             }
         }
