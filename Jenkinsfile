@@ -8,6 +8,7 @@ pipeline {
     environment {
         MAVEN_OPTS="-Xmx100m -Xms100m"
         DOCKER_IMAGE_NAME = "thepolitician/secret-service"
+        ANSIBLE_HOST_KEY_CHECKING=False
     }
 
     stages {
