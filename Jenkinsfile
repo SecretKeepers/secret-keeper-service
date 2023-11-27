@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "ansible-playbook -i /etc/ansible/hosts --user ubuntu secret-deploy.yml"
+                    sh "ansible-playbook -i /etc/ansible/hosts secret-deploy.yml"
                 }
             }
         }
