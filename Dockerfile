@@ -1,17 +1,9 @@
-# Use an official Maven runtime as a parent image
-FROM maven:3.8.4-openjdk-17-slim
+FROM eclipse-temurin:17-alpine
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy the Maven project files into the container
-COPY . .
+COPY target/service-1.0.jar /app/
 
-# Build the Maven project
-RUN mvn clean install -Dmaven.test.skip=true
-
-# Expose the port that your Spring Boot app is listening on
 EXPOSE 8080
 
-# Define the command to run your Spring Boot application
-CMD ["java", "-jar", "target/service-1.0.jar"]
+CMD ["java", "-jar", "service-1.0.jar"]
