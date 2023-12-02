@@ -1,14 +1,16 @@
 package com.secretkeeper.selenium;
 
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public class signInTest {
+class SeleniumTests {
 
-    public static void main(String[] args) {
+     @Test
+     void signInTest() {
 
         System.setProperty("webdriver.chrome.driver", "chromedriver-win64/chromedriver.exe");
         ChromeOptions chromeOptions = new ChromeOptions();
