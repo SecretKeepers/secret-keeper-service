@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://34.205.131.186:3000")
 @RequiredArgsConstructor
 public class AuthHandler {
     private final AuthenticationService authenticationService;
